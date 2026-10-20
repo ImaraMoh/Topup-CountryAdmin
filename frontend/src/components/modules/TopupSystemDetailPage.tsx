@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { initialSystemProducts, initialSystemRetailers, initialSystemSales } from "@/data/initial-data";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import PageHeading from "@/components/shared/PageHeading";
+import Icon from "@/components/shared/Icon";
 import PaginatedTable from "@/components/shared/PaginatedTable";
 import type { SystemProduct, SystemRetailer, SystemSale } from "@/types/admin";
 
@@ -36,15 +37,15 @@ export default function TopupSystemDetailPage({ systemId }: { systemId: string }
 
     {activeTab === "overview" && <div role="tabpanel" className="system-tab-panel">
     <section className="system-detail-kpis" id="system-overview" aria-label={`${system.name} key metrics`}>
-      <article className="system-detail-kpi"><span className="system-kpi-icon purple-dot-bg">◎</span><small>Retail network sales</small><strong>{currency.format(salesTotal)}</strong><span className="system-kpi-change">↗ 14.8% <i>vs. previous month</i></span></article>
-      <article className="system-detail-kpi"><span className="system-kpi-icon blue-dot-bg">▦</span><small>Retailers</small><strong>{retailers.length}</strong><span className="system-kpi-sub">{retailers.filter((retailer) => retailer.status === "Active").length} active outlets</span></article>
-      <article className="system-detail-kpi"><span className="system-kpi-icon green-dot-bg">▤</span><small>Products</small><strong>{products.length}</strong><span className="system-kpi-sub">Available in this catalog</span></article>
-      <article className="system-detail-kpi"><span className="system-kpi-icon amber-dot-bg">◷</span><small>Transactions</small><strong>{sales.length}</strong><span className="system-kpi-sub">{completedSales.length} completed · {sales.length - completedSales.length} pending</span></article>
+      <article className="system-detail-kpi"><span className="system-kpi-icon purple-dot-bg"><Icon name="globe"/></span><small>Retail network sales</small><strong>{currency.format(salesTotal)}</strong><span className="system-kpi-change"><Icon name="arrow-up-right" size={13}/> 14.8% <i>vs. previous month</i></span></article>
+      <article className="system-detail-kpi"><span className="system-kpi-icon blue-dot-bg"><Icon name="grid"/></span><small>Retailers</small><strong>{retailers.length}</strong><span className="system-kpi-sub">{retailers.filter((retailer) => retailer.status === "Active").length} active outlets</span></article>
+      <article className="system-detail-kpi"><span className="system-kpi-icon green-dot-bg"><Icon name="package"/></span><small>Products</small><strong>{products.length}</strong><span className="system-kpi-sub">Available in this catalog</span></article>
+      <article className="system-detail-kpi"><span className="system-kpi-icon amber-dot-bg"><Icon name="clock"/></span><small>Transactions</small><strong>{sales.length}</strong><span className="system-kpi-sub">{completedSales.length} completed · {sales.length - completedSales.length} pending</span></article>
     </section>
 
     <section className="system-detail-panel system-sales-analytics">
       <div className="system-section-heading"><div><span className="panel-eyebrow">PERFORMANCE</span><h2>Sales analytics</h2><p>Retail network sales and transaction activity.</p></div><span className="system-date-range">Last 30 days <span>⌄</span></span></div>
-      <div className="system-chart-summary"><strong>{currency.format(salesTotal)}</strong><span className="system-kpi-change">↗ 14.8%</span><small>Retail network sales volume</small></div>
+      <div className="system-chart-summary"><strong>{currency.format(salesTotal)}</strong><span className="system-kpi-change"><Icon name="arrow-up-right" size={13}/> 14.8%</span><small>Retail network sales volume</small></div>
       <div className="system-sales-chart" role="img" aria-label={`${system.name} sales trend for the last 30 days`}><div className="system-chart-guides"><i/><i/><i/><i/></div>{sales.length ? <div className="system-chart-bars">{salesTrend.map((height, index) => <span key={index} style={{ height: `${height}%` }} title={`Period ${index + 1}: ${height}% of peak sales`}/>)}</div> : <p className="system-empty-state">Sales analytics will appear once this system starts processing transactions.</p>}</div>
       <div className="system-chart-axis"><span>01 Oct</span><span>08 Oct</span><span>15 Oct</span><span>22 Oct</span><span>30 Oct</span></div>
       <div className="system-chart-footer"><span><i/>Sales volume</span><span>Transaction volume <strong>{sales.length.toLocaleString()}</strong></span></div>
@@ -74,7 +75,7 @@ export default function TopupSystemDetailPage({ systemId }: { systemId: string }
 
     {activeTab === "products" && <section role="tabpanel" className="system-detail-panel" id="system-products"><div className="system-section-heading"><div><span className="panel-eyebrow">CATALOG</span><h2>Products</h2><p>Reload and data products available through this system.</p></div><span className="system-table-total">{products.length} products</span></div>
       <PaginatedTable<SystemProduct> rows={products} label="Products" columns={[
-        { label: "PRODUCT", render: (product) => <div className="system-product-name"><span>▤</span><span><strong>{product.name}</strong><small>{product.sku}</small></span></div> },
+        { label: "PRODUCT", render: (product) => <div className="system-product-name"><span><Icon name="package"/></span><span><strong>{product.name}</strong><small>{product.sku}</small></span></div> },
         { label: "CATEGORY", render: (product) => product.category },
         { label: "UNIT PRICE", render: (product) => <strong className="system-money">{currency.format(product.price)}</strong> },
         { label: "AVAILABLE PINS", render: (product) => product.stock.toLocaleString() },

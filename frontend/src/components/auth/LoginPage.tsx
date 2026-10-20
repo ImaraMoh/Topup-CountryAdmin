@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Icon from "@/components/shared/Icon";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,28 +38,22 @@ export default function LoginPage() {
 
   const showHelp = () => setHelpMessage("For this demo, use the credentials shown in the Demo access box.");
 
-  return <main className="login-shell">
-    <section className="login-card">
+  return <main className="login-shell login-single-shell">
+    <section className="login-single-card" aria-labelledby="login-title">
+      <div className="login-card-decoration" aria-hidden="true"><i/><i/><i/></div>
       <Brand/>
-      <div className="login-art"><div className="globe"><span className="globe-lines"/><span className="globe-dot">✦</span></div><span className="float-card card-top"><span className="mini-dot"/> Global operations</span><span className="float-card card-bottom"><span className="mini-shield">✓</span> Secure access</span></div>
-      <div className="login-copy"><div className="eyebrow">YOUR WORLD, IN ONE PLACE</div><h1>One view.<br/><span>Every country.</span></h1><p>Manage your global operations with clarity, confidence, and control.</p></div>
-      <div className="login-foot"><span>© 2026 Country Admin</span><span><i/> All systems operational</span></div>
-    </section>
-    <section className="login-form-side">
-      <div className="form-top"><span>New to Country Admin?</span><button onClick={showHelp}>Get started ↗</button></div>
-      <div className="form-wrap"><div className="welcome-icon">✳</div><div className="eyebrow">WELCOME BACK</div><h2>Sign in to your account</h2><p className="form-intro">Enter your credentials to access your workspace.</p>
-        <form onSubmit={login}>
-          <label htmlFor="username">Username</label><div className="input-wrap"><span className="input-icon">♙</span><input id="username" value={username} onChange={event => setUsername(event.target.value)} placeholder="Enter your username" autoComplete="username" required/></div>
-          <div className="password-label"><label htmlFor="password">Password</label><button type="button" onClick={showHelp}>Forgot password?</button></div>
-          <div className="input-wrap"><span className="input-icon">♙</span><input id="password" type={showPassword ? "text" : "password"} value={password} onChange={event => setPassword(event.target.value)} placeholder="Enter your password" autoComplete="current-password" required/><button className="eye-button" type="button" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password visibility">{showPassword ? "Hide" : "Show"}</button></div>
-          {error && <div className="login-error" role="alert">{error}</div>}
-          <div className="remember-row"><label className="check-label"><input id="remember-login" type="checkbox" defaultChecked/><span/>Remember me</label><span className="secure-note">⌑ Secure connection</span></div>
-          <button className="sign-in" type="submit">Sign in <span>→</span></button>
-        </form>
-        {helpMessage && <div className="help-message" role="status">{helpMessage}</div>}
-        <div className="demo-hint"><span>✳</span><div><strong>Demo access</strong><br/>Username: <code>admin.login</code> &nbsp;·&nbsp; Password: <code>Admin@123</code></div></div>
-      </div>
-      <div className="form-footer"><span>Protected by enterprise-grade security</span><button onClick={showHelp}>Need help?</button></div>
+      <div className="login-single-heading"><span className="welcome-icon"><Icon name="sparkles"/></span><div className="eyebrow">COUNTRY ADMIN WORKSPACE</div><h1 id="login-title">Welcome back</h1><p>Sign in to continue to your global operations dashboard.</p></div>
+      <form onSubmit={login}>
+        <label htmlFor="username">Username</label><div className="input-wrap"><span className="input-icon"><Icon name="user"/></span><input id="username" value={username} onChange={event => setUsername(event.target.value)} placeholder="Enter your username" autoComplete="username" required/></div>
+        <div className="password-label"><label htmlFor="password">Password</label><button type="button" onClick={showHelp}>Forgot password?</button></div>
+        <div className="input-wrap"><span className="input-icon"><Icon name="shield"/></span><input id="password" type={showPassword ? "text" : "password"} value={password} onChange={event => setPassword(event.target.value)} placeholder="Enter your password" autoComplete="current-password" required/><button className="eye-button" type="button" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password visibility">{showPassword ? "Hide" : "Show"}</button></div>
+        {error && <div className="login-error" role="alert">{error}</div>}
+        <div className="remember-row"><label className="check-label"><input id="remember-login" type="checkbox" defaultChecked/><span/>Remember me</label><span className="secure-note"><Icon name="shield" size={14}/> Secure connection</span></div>
+        <button className="sign-in" type="submit">Sign in <Icon name="arrow-up-right" size={17}/></button>
+      </form>
+      {helpMessage && <div className="help-message" role="status">{helpMessage}</div>}
+      <div className="demo-hint"><span><Icon name="sparkles" size={17}/></span><div><strong>Demo access</strong><br/><span>Username: <code>admin.login</code> &nbsp;·&nbsp; Password: <code>Admin@123</code></span></div></div>
+      <footer className="login-single-footer"><span><i/> Protected secure access</span><span>© 2026 Country Admin</span></footer>
     </section>
   </main>;
 }

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import PageHeading from "@/components/shared/PageHeading";
+import Icon from "@/components/shared/Icon";
 import MetricCard from "@/components/shared/MetricCard";
 
 const periods = ["Last 7 days", "Last 30 days", "Last 90 days"] as const;
@@ -34,14 +35,14 @@ export default function AnalyticsPage() {
   return <div className="module-page analytics-module">
     <PageHeading eyebrow="WORKSPACE PERFORMANCE" title="Analytics" description="Track workspace growth, top-up system activity, and country coverage." action={<label className="analytics-period">Period<select value={period} onChange={(event) => setPeriod(event.target.value as Period)} aria-label="Analytics date range">{periods.map((option) => <option key={option}>{option}</option>)}</select></label>} />
     <div className="metric-grid">
-      <MetricCard icon="◎" label="Countries covered" value={String(countries.length)} change={`${activeCountries} active`} note="in your workspace" color="blue" bars={bars}/>
-      <MetricCard icon="♙" label="Active top-up admins" value={String(activeAdmins)} change={`${topupSystems.length} total`} note="top-up systems" color="purple" bars={bars.slice().reverse()}/>
-      <MetricCard icon="◷" label="Workspace events" value={String(activity.length)} change="Recorded" note="activity log entries" color="orange" bars={bars}/>
-      <MetricCard icon="↗" label="Coverage rate" value={`${countries.length ? Math.round((activeCountries / countries.length) * 100) : 0}%`} change="Active" note="country operations" color="green" bars={bars.slice().reverse()}/>
+      <MetricCard icon={<Icon name="globe"/>} label="Countries covered" value={String(countries.length)} change={`${activeCountries} active`} note="in your workspace" color="blue" bars={bars}/>
+      <MetricCard icon={<Icon name="layers"/>} label="Active top-up admins" value={String(activeAdmins)} change={`${topupSystems.length} total`} note="top-up systems" color="purple" bars={bars.slice().reverse()}/>
+      <MetricCard icon={<Icon name="activity"/>} label="Workspace events" value={String(activity.length)} change="Recorded" note="activity log entries" color="orange" bars={bars}/>
+      <MetricCard icon={<Icon name="chart"/>} label="Coverage rate" value={`${countries.length ? Math.round((activeCountries / countries.length) * 100) : 0}%`} change="Active" note="country operations" color="green" bars={bars.slice().reverse()}/>
     </div>
     <div className="analytics-grid">
       <section className="analytics-card analytics-chart-card">
-        <div className="card-heading"><div><h3>Workspace activity</h3><p>Activity trend · {period.toLowerCase()}</p></div><Link className="secondary-button" href="/activity-logs">View activity →</Link></div>
+        <div className="card-heading"><div><h3>Workspace activity</h3><p>Activity trend · {period.toLowerCase()}</p></div></div>
         <div className="chart-legend"><span><i/>Workspace activity</span><small>relative volume</small></div>
         <div className="activity-chart" role="img" aria-label={`Workspace activity trend for ${period.toLowerCase()}`}>
           <div className="chart-y-labels"><span>High</span><span>Medium</span><span>Low</span></div>
@@ -49,10 +50,10 @@ export default function AnalyticsPage() {
         </div>
       </section>
       <section className="analytics-card region-analytics">
-        <div className="card-heading"><div><h3>Country coverage</h3><p>Countries by region</p></div><Link className="secondary-button" href="/countries">View countries →</Link></div>
+        <div className="card-heading"><div><h3>Country coverage</h3><p>Countries by region</p></div><Link className="secondary-button" href="/countries">View countries <span className="button-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></Link></div>
         <div className="region-analytics-list">{regionRows.map(({ region, count, percent }) => <div className="region-analytics-row" key={region}><div><span>{region}</span><strong>{count}</strong></div><div className="region-progress"><i style={{ width: `${percent}%` }}/></div><small>{percent}% of workspace</small></div>)}</div>
       </section>
     </div>
-    <section className="analytics-summary"><div><span className="metric-icon blue">◎</span><p><strong>{countries.length}</strong><small>countries represented</small></p></div><div><span className="metric-icon purple">♙</span><p><strong>{topupSystems.length}</strong><small>top-up admin systems</small></p></div><div><span className="metric-icon green">✓</span><p><strong>{activeCountries}</strong><small>active country operations</small></p></div></section>
+    <section className="analytics-summary"><div><span className="metric-icon blue"><Icon name="globe"/></span><p><strong>{countries.length}</strong><small>countries represented</small></p></div><div><span className="metric-icon purple"><Icon name="user"/></span><p><strong>{topupSystems.length}</strong><small>top-up admin systems</small></p></div><div><span className="metric-icon green"><Icon name="check"/></span><p><strong>{activeCountries}</strong><small>active country operations</small></p></div></section>
   </div>;
 }

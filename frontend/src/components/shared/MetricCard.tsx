@@ -1,3 +1,5 @@
-export default function MetricCard({ icon, label, value, change, note, color, bars }: { icon: string; label: string; value: string; change: string; note: string; color: string; bars: number[] }) {
-  return <div className="metric-card"><div className="metric-top"><span className={`metric-icon ${color}`}>{icon}</span><span className="metric-trend">↗ {change}</span></div><div className="metric-label">{label}</div><div className="metric-value">{value}</div><div className="metric-bottom"><span>{note}</span><div className={`sparkline ${color}`}>{bars.map((bar, index) => <i key={index} style={{ height: `${bar}%` }}/>)}</div></div></div>;
+import type { ReactNode } from "react";
+import Icon from "@/components/shared/Icon";
+export default function MetricCard({ icon, label, value, change, note, color, bars }: { icon: ReactNode; label: string; value: string; change: string; note: string; color: string; bars: number[] }) {
+  return <div className="metric-card"><div className="metric-top"><span className={`metric-icon ${color}`}>{icon}</span><span className="metric-trend"><Icon name="arrow-up-right" size={13}/> {change}</span></div><div className="metric-label">{label}</div><div className="metric-value">{value}</div><div className="metric-bottom"><span>{note}</span><div className={`sparkline ${color}`}>{bars.map((bar, index) => <i key={index} style={{ height: `${bar}%` }}/>)}</div></div></div>;
 }
