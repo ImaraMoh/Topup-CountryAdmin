@@ -33,12 +33,12 @@ export default function AnalyticsPage() {
   const bars = activityByPeriod[period];
 
   return <div className="module-page analytics-module">
-    <PageHeading eyebrow="WORKSPACE PERFORMANCE" title="Analytics" description="Track workspace growth, top-up system activity, and country coverage." action={<label className="analytics-period">Period<select value={period} onChange={(event) => setPeriod(event.target.value as Period)} aria-label="Analytics date range">{periods.map((option) => <option key={option}>{option}</option>)}</select></label>} />
+    <PageHeading eyebrow="WORKSPACE PERFORMANCE" title="Analytics" description="Workspace activity and country coverage." action={<label className="analytics-period">Period<select value={period} onChange={(event) => setPeriod(event.target.value as Period)} aria-label="Analytics date range">{periods.map((option) => <option key={option}>{option}</option>)}</select></label>} />
     <div className="metric-grid">
-      <MetricCard icon={<Icon name="globe"/>} label="Countries covered" value={String(countries.length)} change={`${activeCountries} active`} note="in your workspace" color="blue" bars={bars}/>
-      <MetricCard icon={<Icon name="layers"/>} label="Active top-up admins" value={String(activeAdmins)} change={`${topupSystems.length} total`} note="top-up systems" color="purple" bars={bars.slice().reverse()}/>
-      <MetricCard icon={<Icon name="activity"/>} label="Workspace events" value={String(activity.length)} change="Recorded" note="activity log entries" color="orange" bars={bars}/>
-      <MetricCard icon={<Icon name="chart"/>} label="Coverage rate" value={`${countries.length ? Math.round((activeCountries / countries.length) * 100) : 0}%`} change="Active" note="country operations" color="green" bars={bars.slice().reverse()}/>
+      <MetricCard icon={<Icon name="globe"/>} label="Countries" value={String(countries.length)} change={`${activeCountries} active`} color="blue"/>
+      <MetricCard icon={<Icon name="layers"/>} label="Top-up admins" value={String(activeAdmins)} change={`${topupSystems.length} total`} color="purple"/>
+      <MetricCard icon={<Icon name="activity"/>} label="Workspace events" value={String(activity.length)} change="Recorded" color="orange"/>
+      <MetricCard icon={<Icon name="chart"/>} label="Coverage" value={`${countries.length ? Math.round((activeCountries / countries.length) * 100) : 0}%`} change="Active" color="green"/>
     </div>
     <div className="analytics-grid">
       <section className="analytics-card analytics-chart-card">

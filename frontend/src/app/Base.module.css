@@ -1,0 +1,51 @@
+:global(html) .base {
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.base, .base *, .base *::before, .base *::after {
+  box-sizing: border-box;
+}
+
+.base {
+  min-height: 100vh;
+  margin: 0;
+  color: #20243a;
+  background: #f5f7fc;
+  font-family: Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.base button, .base input, .base select, .base textarea {
+  font: inherit;
+}
+
+.base button {
+  cursor: pointer;
+}
+
+.base button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.base a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.base button:focus-visible, .base a:focus-visible, .base input:focus-visible, .base select:focus-visible, .base textarea:focus-visible {
+  outline: 3px solid #9b8bf4;
+  outline-offset: 3px;
+}
+
+.base :global(.app-shell-loading) {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  color: #73778d;
+  background: #f5f7fc;
+  font-weight: 650;
+}

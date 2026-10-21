@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/shared/Icon";
+import styles from "./LoginPage.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function LoginPage() {
 
   const showHelp = () => setHelpMessage("For this demo, use the credentials shown in the Demo access box.");
 
-  return <main className="login-shell login-single-shell">
+  return <main className={`${styles.root} login-shell login-single-shell`}>
     <section className="login-single-card" aria-labelledby="login-title">
       <div className="login-card-decoration" aria-hidden="true"><i/><i/><i/></div>
       <Brand/>

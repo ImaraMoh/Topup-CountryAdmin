@@ -4,15 +4,15 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import Icon from "@/components/shared/Icon";
-
-const regionPalette = ["r1", "r2", "r3", "r4"];
+import styles from "./OverviewPage.module.css";
 
 export default function OverviewPage() {
-  const { topupSystems, countries, activity } = useWorkspace();
+  const { topupSystems, countries, activity, profile } = useWorkspace();
   const pending = topupSystems.filter((admin) => admin.status === "Setup").length;
   const activeAdmins = topupSystems.filter((admin) => admin.status === "Active").length;
   const activeCountries = countries.filter((country) => country.status === "Active").length;
   const coverage = countries.length ? Math.round((activeCountries / countries.length) * 100) : 0;
+
   const regions = useMemo(() => {
     const counts = countries.reduce<Record<string, number>>((result, country) => {
       result[country.region] = (result[country.region] ?? 0) + 1;
@@ -21,33 +21,74 @@ export default function OverviewPage() {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 4);
   }, [countries]);
 
-  return <div className="overview-page">
-    <section className="overview-welcome">
-      <div><span className="overview-eyebrow"><i/>GLOBAL OPERATIONS · OVERVIEW</span><h1>Good morning, Olivia</h1><p>Your workspace at a glance. Here are the details that need your attention today.</p></div>
-      <div className="overview-actions"><Link className="overview-analytics-link" href="/analytics"><Icon name="arrow-up-right" size={15}/> <span>Analytics</span></Link><Link className="primary-button" href="/admin-management"><Icon name="plus" size={15}/> Add admin</Link></div>
-    </section>
+  const firstName = profile?.name ? profile.name.split(" ")[0] : "Admin";
 
-    <section className="overview-kpis" aria-label="Workspace key metrics">
-      <article className="overview-kpi kpi-purple"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="globe"/></span><span className="kpi-trend"><Icon name="arrow-up-right" size={12}/> 12%</span></div><span className="overview-kpi-label">Countries</span><strong>{countries.length}</strong><small>{activeCountries} active operations</small><div className="kpi-sparkline" aria-hidden="true">{[28, 45, 36, 54, 49, 73, 62, 88, 76, 100].map((height, index) => <i key={index} style={{ height: `${height}%` }}/>)}</div></article>
-      <article className="overview-kpi kpi-blue"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="user"/></span><span className="kpi-trend">Systems</span></div><span className="overview-kpi-label">Top-up admins</span><strong>{topupSystems.length}</strong><small>{activeAdmins} active top-up systems</small><div className="kpi-sparkline" aria-hidden="true">{[38, 30, 48, 42, 59, 51, 71, 65, 86, 100].map((height, index) => <i key={index} style={{ height: `${height}%` }}/>)}</div></article>
-      <article className="overview-kpi kpi-amber"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="clock"/></span><span className={`kpi-status ${pending ? "needs-attention" : "all-clear"}`}>{pending ? "Needs attention" : "All clear"}</span></div><span className="overview-kpi-label">Systems in setup</span><strong>{pending}</strong><small>{pending ? "Awaiting configuration" : "No systems need setup"}</small><div className="kpi-kicker"><span>{pending ? "Review setup" : "All systems ready"}</span><span><Icon name="arrow-up-right" size={14}/></span></div></article>
-      <article className="overview-kpi kpi-green"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="check"/></span><span className="kpi-trend">Healthy</span></div><span className="overview-kpi-label">Country coverage</span><strong>{coverage}<em>%</em></strong><small>{activeCountries} of {countries.length} countries active</small><div className="kpi-progress"><i style={{ width: `${coverage}%` }}/></div></article>
-    </section>
+  return (
+    <div className={`${styles.root} executive-overview`}>
+      <section className="exec-welcome-card">
+        <div className="exec-welcome-content">
+          <div className="exec-eyebrow"><span className="live-indicator"/> COUNTRY ADMIN</div>
+          <h1>Good day, {firstName}</h1>
+          <p>Manage top-up systems and country coverage.</p>
+        </div>
+        <div className="exec-welcome-actions">
+          <Link className="exec-btn-secondary" href="/analytics"><Icon name="chart" size={16}/><span>View analytics</span></Link>
+          <Link className="exec-btn-primary" href="/admin-management"><Icon name="plus" size={16}/><span>Add top-up admin</span></Link>
+        </div>
+        <div className="welcome-orbit" aria-hidden="true"><i/><i/><i/></div>
+      </section>
 
-    <section className="overview-panels">
-      <article className="overview-panel overview-team-panel">
-        <div className="overview-panel-heading"><div><span className="panel-eyebrow">TOP-UP ADMINISTRATION</span><h2>Top-up systems</h2><p>Systems managed by the Country Admin.</p></div><Link className="panel-link" href="/admin-management">Manage systems <span><Icon name="arrow-up-right" size={14}/></span></Link></div>
-        <div className="overview-team-list">{topupSystems.slice(0, 4).map((system) => <Link className="overview-team-row" key={system.id} href={`/admin-management/${system.id}`}><span className="system-brand-mark" style={{ background: `linear-gradient(145deg, ${system.accent}, #6385dc)` }}><Icon name="arrow-up-right"/></span><div className="overview-admin-info"><strong>{system.name}</strong><small>{system.country} · Top-up system</small></div><span className={`overview-status ${system.status === "Active" ? "is-active" : "is-pending"}`}><i/>{system.status}</span></Link>)}{topupSystems.length === 0 && <p className="overview-empty">No top-up admins yet. Add a system to get started.</p>}</div>
-        <Link className="overview-invite-link" href="/admin-management"><Icon name="plus" size={15}/> Add a top-up admin</Link>
-      </article>
+      <section className="exec-kpi-grid" aria-label="Workspace key metrics">
+        <article className="exec-kpi-card kpi-glow-purple">
+          <div className="exec-kpi-header"><div className="exec-kpi-icon-box purple"><Icon name="globe" size={19}/></div></div>
+          <span className="exec-kpi-title">Countries covered</span>
+          <div className="exec-kpi-value-row"><strong>{countries.length}</strong><em>{activeCountries} active</em></div>
+          
+        </article>
+        <article className="exec-kpi-card kpi-glow-blue">
+          <div className="exec-kpi-header"><div className="exec-kpi-icon-box blue"><Icon name="layers" size={19}/></div></div>
+          <span className="exec-kpi-title">Top-up systems</span>
+          <div className="exec-kpi-value-row"><strong>{topupSystems.length}</strong><em>{activeAdmins} active</em></div>
+          
+        </article>
+        <article className="exec-kpi-card kpi-glow-amber">
+          <div className="exec-kpi-header"><div className="exec-kpi-icon-box amber"><Icon name="clock" size={19}/></div><span className={`exec-kpi-badge ${pending ? "warning" : "success"}`}>{pending ? "Needs attention" : "All clear"}</span></div>
+          <span className="exec-kpi-title">Awaiting setup</span>
+          <div className="exec-kpi-value-row"><strong>{pending}</strong><em>{pending ? "Needs review" : "All clear"}</em></div>
+          
+        </article>
+        <article className="exec-kpi-card kpi-glow-green">
+          <div className="exec-kpi-header"><div className="exec-kpi-icon-box green"><Icon name="check" size={19}/></div></div>
+          <span className="exec-kpi-title">Active country coverage</span>
+          <div className="exec-kpi-value-row"><strong>{coverage}<em>%</em></strong><em>{activeCountries} / {countries.length} active</em></div>
+          
+        </article>
+      </section>
 
-      <article className="overview-panel overview-pulse-panel">
-        <div className="overview-panel-heading"><div><span className="panel-eyebrow">WORKSPACE PULSE</span><h2>Regional coverage</h2><p>Countries operating across your regions.</p></div><Link className="panel-icon-link" href="/countries" aria-label="View all countries" title="View all countries"><Icon name="arrow-up-right" size={15}/></Link></div>
-        {regions.length ? <div className="overview-region-list">{regions.map(([name, count], index) => <div className="overview-region-row" key={name}><div className="overview-region-top"><span><i className={`region-dot ${regionPalette[index % regionPalette.length]}`}/>{name}</span><strong>{count}<small> {count === 1 ? "country" : "countries"}</small></strong></div><div className="overview-region-track"><i style={{ width: `${countries.length ? (count / countries.length) * 100 : 0}%` }}/></div></div>)}</div> : <p className="overview-empty">Add a country to see regional coverage.</p>}
-        <div className="overview-pulse-footer"><span className="system-health"><i/>All systems operational</span><span className="workspace-update-label">Recent activity</span></div>
-      </article>
-    </section>
+      <section className="exec-main-grid">
+        <article className="exec-panel exec-systems-panel">
+          <div className="exec-panel-header"><div><span className="exec-panel-sub">PLATFORM ADMINS</span><h2>Top-up systems</h2><p>Open a system to see its retailers, products, sales, and analytics.</p></div><Link className="exec-panel-action" href="/admin-management">All admins <span><Icon name="arrow-up-right" size={14}/></span></Link></div>
+          <div className="exec-systems-list">{topupSystems.slice(0,5).map(system=><Link className="exec-row-item" key={system.id} href={`/admin-management/${system.id}`}>
+            <div className="exec-row-icon" style={{background:`linear-gradient(145deg,${system.accent || "#6d45a5"},#302044)`}}><Icon name="layers" size={17}/></div>
+            <div className="exec-row-meta"><strong>{system.name}</strong><span>{system.country} · {system.contactName}</span></div>
+            <span className={`exec-status-pill ${system.status === "Active" ? "active" : "setup"}`}><i/>{system.status}</span>
+            <span className="exec-row-arrow"><Icon name="arrow-up-right" size={15}/></span>
+          </Link>)}{topupSystems.length===0&&<p className="exec-empty-state">No top-up admins have been added yet.</p>}</div>
+          <Link className="exec-panel-footer-btn" href="/admin-management"><Icon name="plus" size={15}/> Add a top-up admin</Link>
+        </article>
 
-    <section className="overview-recent-activity"><div className="overview-activity-heading"><div><span className="panel-eyebrow">LATEST UPDATES</span><h2>Recent activity</h2></div></div><div className="overview-activity-list">{activity.slice(0, 3).map((item) => <article className="overview-activity-row" key={item.id}><span className="avatar" style={{ background: item.color }}>{item.initials}</span><div><p><strong>{item.name}</strong> {item.action} <b>{item.target}</b></p><small>{item.category}</small></div><time>{item.time}</time></article>)}{activity.length === 0 && <p className="overview-empty">Workspace updates will appear here.</p>}</div></section>
-  </div>;
+        <div className="exec-overview-aside">
+          <article className="exec-panel exec-coverage-panel">
+            <div className="exec-panel-header"><div><span className="exec-panel-sub">COUNTRY PORTFOLIO</span><h2>Regional coverage</h2></div><Link className="exec-panel-action icon-only" href="/countries" aria-label="Open countries"><Icon name="arrow-up-right" size={15}/></Link></div>
+            <div className="exec-panel-body padded">{regions.length?<div className="exec-region-list">{regions.map(([name,count],index)=><div className="exec-region-item" key={name}><div className="exec-region-info"><span className={`exec-region-dot dot-${(index%4)+1}`}/><strong>{name}</strong><span className="exec-region-count">{count} {count===1?"country":"countries"}</span></div><div className="exec-region-bar"><i style={{width:`${countries.length?(count/countries.length)*100:0}%`}}/></div></div>)}</div>:<p className="exec-empty-state">Country coverage will appear here.</p>}</div>
+            <div className="exec-panel-status-bar"><span className="exec-telemetry-status"><i/> Workspace operational</span><span>{activeCountries} active</span></div>
+          </article>
+          <article className="exec-panel exec-activity-panel">
+            <div className="exec-panel-header"><div><span className="exec-panel-sub">LATEST UPDATES</span><h2>Recent activity</h2></div></div>
+            <div className="exec-activity-list">{activity.slice(0,4).map(item=><div className="exec-activity-row" key={item.id}><div className="exec-activity-avatar" style={{background:item.color || "#6e5aa5"}}>{item.initials}</div><div className="exec-activity-content"><p><strong>{item.name}</strong> {item.action} <b>{item.target}</b></p><span>{item.category}</span></div><time>{item.time}</time></div>)}{activity.length===0&&<p className="exec-empty-state">No recent updates to show.</p>}</div>
+          </article>
+        </div>
+      </section>
+    </div>
+  );
 }

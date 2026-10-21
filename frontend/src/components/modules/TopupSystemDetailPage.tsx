@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { initialSystemProducts, initialSystemRetailers, initialSystemSales } from "@/data/initial-data";
 import { useWorkspace } from "@/context/WorkspaceContext";
-import PageHeading from "@/components/shared/PageHeading";
 import Icon from "@/components/shared/Icon";
 import PaginatedTable from "@/components/shared/PaginatedTable";
 import type { SystemProduct, SystemRetailer, SystemSale } from "@/types/admin";
@@ -27,9 +26,8 @@ export default function TopupSystemDetailPage({ systemId }: { systemId: string }
 
   return <div className="module-page system-detail-module">
     <div className="system-detail-back"><Link href="/admin-management">← <span>All top-up systems</span></Link><span className="system-breadcrumb-separator">/</span><span>{system.name}</span></div>
-    <PageHeading eyebrow="TOP-UP SYSTEM · SRI LANKA" title={system.name} description="Monitor this top-up system, its retailers, products, transactions, and sales performance."/>
     <section className="system-detail-hero">
-      <div className="system-identity"><span className="system-brand-mark system-brand-large" style={{ background: `linear-gradient(145deg, ${system.accent}, #6385dc)` }}>N</span><div><span className="system-active-pill"><i/>{system.status} system</span><h2>{system.name}</h2><p>{system.country} · Managed by Country Admin</p></div></div>
+      <div className="system-identity"><span className="system-brand-mark system-brand-large" style={{ background: `linear-gradient(145deg, ${system.accent}, #6385dc)` }}>{system.name.slice(0, 1)}</span><div><span className="system-active-pill"><i/>{system.status} system</span><h2>{system.name}</h2><p>{system.country} · Managed by Country Admin</p></div></div>
       <div className="system-contact"><span>System contact</span><strong>{system.contactName}</strong><a href={`mailto:${system.contactEmail}`}>{system.contactEmail}</a></div>
       <div className="system-health-summary"><i/>System services operational</div>
     </section>

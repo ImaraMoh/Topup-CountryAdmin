@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import "./globals.css";
+import styles from "./Base.module.css";
 
 export const metadata: Metadata = {
   title: "Country Admin | Global operations",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={styles.base}>{children}</body>
     </html>
   );
 }

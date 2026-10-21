@@ -1,0 +1,80 @@
+.root {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100svh;
+  overflow: auto;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 15% 15%,#e8eaff 0,transparent 32%), radial-gradient(ellipse at 88% 85%,#e8edff 0,transparent 31%), #f4f6fb;
+}
+
+.root :global(.login-single-card) {
+  position: relative;
+  width: min(460px,100%);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  padding: 34px 36px 24px;
+  border: 1px solid rgba(255,255,255,.95);
+  border-radius: 24px;
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 28px 80px rgba(40,47,83,.13),0 3px 12px rgba(40,47,83,.04);
+  backdrop-filter: blur(20px);
+  text-align: center;
+  animation: loginRise .38s ease both;
+}
+.root :global(.login-card-decoration) { position: absolute; inset: 0 0 auto; height: 135px; overflow: hidden; border-radius: inherit; pointer-events: none; background: radial-gradient(ellipse at 50% -30%,#c9c5f344,transparent 70%); }
+.root :global(.login-card-decoration):before,.root :global(.login-card-decoration):after { position: absolute; top: -140px; left: 50%; width: 250px; height: 250px; transform: translateX(-50%); border: 1px solid #837bd21c; border-radius: 50%; content: ''; }
+.root :global(.login-card-decoration):after { top: -166px; width: 300px; height: 300px; }
+.root :global(.login-card-decoration i) { position: absolute; top: 52px; left: 14%; width: 5px; height: 5px; border-radius: 50%; background: #8176d570; }
+.root :global(.login-card-decoration i:nth-child(2)) { top: 83px; right: 13%; left: auto; width: 4px; height: 4px; }
+.root :global(.login-card-decoration i:nth-child(3)) { top: 112px; left: 25%; width: 3px; height: 3px; }
+.root :global(.login-single-card > .brand-mark) { position: relative; z-index: 1; justify-content: center; margin: 0 0 21px; }
+.root :global(.brand-mark) { display:flex; align-items:center; gap:10px; color:#2d1b3e; font-size:18px; font-weight:800; letter-spacing:-.045em; }
+.root :global(.brand-icon) { display:grid; width:35px; height:35px; place-items:center; border-radius:11px; background:linear-gradient(145deg,#966eb5,#573472); color:#fff; box-shadow:0 7px 16px #50306932; }
+.root :global(.brand-light) { color:#83778f; font-weight:650; }
+.root :global(.login-single-heading),.root :global(.login-single-card form),.root :global(.login-single-card > .demo-hint),.root :global(.login-single-footer),.root :global(.help-message) { position: relative; z-index: 1; }
+.root :global(.login-single-heading) { margin-bottom: 21px; }
+.root :global(.welcome-icon) { display: grid; width: 42px; height: 42px; place-items: center; margin: 0 auto 13px; border: 1px solid #e8e8f3; border-radius: 13px; background: linear-gradient(145deg,#f0efff,#eff5ff); color: #695fc3; }
+.root :global(.eyebrow) { color: #756db2; font-size: 10px; font-weight: 800; letter-spacing: .15em; }
+.root :global(.login-single-heading h1) { margin: 7px 0 5px; color: #24273e; font-size: 29px; font-weight: 800; letter-spacing: -.045em; }
+.root :global(.login-single-heading p) { margin: 0; color: #777d91; font-size: 13px; }
+.root :global(.login-single-card form) { text-align: left; }
+.root :global(.login-single-card form > label),.root :global(.password-label label) { display: block; margin-bottom: 6px; color: #525971; font-size: 12px; font-weight: 700; }
+.root :global(.input-wrap) { display: flex; height: 47px; align-items: center; gap: 10px; margin-bottom: 15px; padding: 0 12px; border: 1px solid #e3e6ef; border-radius: 11px; background: #fafbfe; color: #8f95a8; transition: border-color .18s,box-shadow .18s,background .18s; }
+.root :global(.input-wrap:focus-within) { border-color: #aaa3e7; background: #fff; box-shadow: 0 0 0 3px #7368d315; }
+.root :global(.input-icon) { display: grid; place-items: center; }
+.root :global(.input-wrap input) { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: #24273e; font-size: 13px; }
+.root :global(.input-wrap input::placeholder) { color: #a4a8b7; }
+.root :global(.password-label) { display: flex; align-items: center; justify-content: space-between; }
+.root :global(.password-label button),.root :global(.eye-button) { border: 0; background: transparent; color: #655bc0; font-size: 11px; font-weight: 700; }
+.root :global(.eye-button) { color: #777d91; }
+.root :global(.remember-row) { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 16px; }
+.root :global(.check-label),.root :global(.secure-note) { display: flex; align-items: center; gap: 7px; color: #777d91; font-size: 11px; }
+.root :global(.check-label input) { width: 15px; height: 15px; accent-color: #6c61c7; }
+.root :global(.secure-note) { color: #9297a8; }
+.root :global(.sign-in) { display: flex; width: 100%; height: 47px; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 11px; background: linear-gradient(110deg,#7065ca,#648edb); color: #fff; box-shadow: 0 8px 18px #665bc333; font-size: 13px; font-weight: 750; transition: transform .18s,box-shadow .18s; }
+.root :global(.sign-in:hover) { transform: translateY(-1px); box-shadow: 0 11px 24px #665bc340; }
+.root :global(.login-error),.root :global(.help-message) { margin: 0 0 13px; padding: 10px 12px; border: 1px solid #f3d4d8; border-radius: 10px; background: #fff4f5; color: #a94f5b; font-size: 12px; text-align: left; }
+.root :global(.help-message) { margin: 11px 0 0; border-color: #e2def8; background: #f6f5ff; color: #6259b2; }
+.root :global(.demo-hint) { display: flex; align-items: flex-start; gap: 10px; margin-top: 17px; padding: 12px 13px; border: 1px solid #e8eaf2; border-radius: 12px; background: #f8f9fd; text-align: left; }
+.root :global(.demo-hint > span) { display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border-radius: 9px; background: #efefff; color: #655bc0; }
+.root :global(.demo-hint > div) { color: #72788d; font-size: 10px; line-height: 1.8; }
+.root :global(.demo-hint strong) { color: #30344b; font-size: 11px; }
+.root :global(.demo-hint code) { padding: 1px 4px; border-radius: 4px; background: #eeedfa; color: #6158b5; font-size: 10px; }
+.root :global(.login-single-footer) { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eceef4; color: #969bad; font-size: 9px; }
+.root :global(.login-single-footer span:first-child) { display: flex; align-items: center; gap: 6px; }
+.root :global(.login-single-footer i) { width: 6px; height: 6px; border-radius: 50%; background: #38a482; }
+@keyframes loginRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 520px) { .root { padding: 12px; } .root :global(.login-single-card) { width: min(440px,100%); padding: 26px 22px 18px; border-radius: 20px; } .root :global(.login-single-heading h1) { font-size: 26px; } }
+@media (max-height: 680px) { .root { padding: 10px; } .root :global(.login-single-card) { max-height: calc(100dvh - 20px); padding-top: 20px; padding-bottom: 16px; } .root :global(.login-single-card > .brand-mark) { margin-bottom: 12px; } .root :global(.welcome-icon) { display: none; } .root :global(.login-single-heading) { margin-bottom: 13px; } .root :global(.input-wrap) { height: 42px; margin-bottom: 10px; } .root :global(.demo-hint) { margin-top: 10px; padding: 8px 11px; } .root :global(.login-single-footer) { margin-top: 10px; padding-top: 8px; } }
+
+.root { background:radial-gradient(ellipse at 15% 12%,#e8def2 0,transparent 34%),radial-gradient(ellipse at 87% 82%,#efe8f4 0,transparent 36%),#f7f4fa; }
+.root :global(.brand-icon),.root :global(.sign-in) { background:linear-gradient(110deg,#5c347e,#875db0); }
+.root :global(.welcome-icon),.root :global(.demo-hint > span) { background:#f1e9f7; color:#634087; }
+.root :global(.eyebrow),.root :global(.password-label button),.root :global(.demo-hint code) { color:#68418d; }
+.root :global(.sign-in) { box-shadow:0 9px 22px #59357737; }
+.root :global(.login-card-decoration) { background:radial-gradient(ellipse at 50% -30%,#c2a4db55,transparent 70%); }
