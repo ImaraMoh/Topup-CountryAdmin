@@ -49,8 +49,12 @@ export const initialSystemRetailers: SystemRetailer[] = [
 export const initialSystemProducts: SystemProduct[] = [
   { id: 301, name: "NSOL Reload 500", sku: "NSL-500", category: "Mobile reload", price: 500, stock: 820, status: "Available" },
   { id: 302, name: "NSOL Reload 1,000", sku: "NSL-1000", category: "Mobile reload", price: 1000, stock: 476, status: "Available" },
-  { id: 303, name: "NSOL Data Pack 30GB", sku: "NSD-30", category: "Data bundle", price: 1890, stock: 34, status: "Low stock" },
-  { id: 304, name: "NSOL Data Pack 60GB", sku: "NSD-60", category: "Data bundle", price: 3490, stock: 112, status: "Available" },
+  { id: 303, name: "NSOL Data Pack 30GB", sku: "NSD-30", category: "Data bundles", price: 1890, stock: 34, status: "Low stock" },
+  { id: 304, name: "NSOL Data Pack 60GB", sku: "NSD-60", category: "Data bundles", price: 3490, stock: 112, status: "Available" },
+  { id: 305, name: "NSOL Voice & SMS Pack", sku: "NSV-01", category: "Voice & SMS", price: 720, stock: 305, status: "Available" },
+  { id: 306, name: "Game PIN 1,000", sku: "NSG-1000", category: "Gaming PINs", price: 1000, stock: 142, status: "Available" },
+  { id: 307, name: "Digital Gift Card 2,500", sku: "NSGFT-2500", category: "Gift cards", price: 2500, stock: 68, status: "Available" },
+  { id: 308, name: "Utility Payment PIN", sku: "NSU-01", category: "Utility payments", price: 1500, stock: 94, status: "Available" },
 ];
 
 export const initialSystemSales: SystemSale[] = [
