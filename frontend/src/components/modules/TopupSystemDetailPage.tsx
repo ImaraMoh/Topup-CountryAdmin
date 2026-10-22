@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useMemo, useState } from "react";
 import { initialSystemProducts, initialSystemRetailers, initialSystemSales } from "@/data/initial-data";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import Icon from "@/components/shared/Icon";
 import PaginatedTable from "@/components/shared/PaginatedTable";
-import type { SystemProduct, SystemRetailer, SystemSale } from "@/types/admin";
+import shellStyles from "@/components/layout/AppShell.module.css";
+import type { SystemProduct, SystemRetailer, SystemSale, TopupSystem } from "@/types/admin";
 
 const currency = new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR", maximumFractionDigits: 0 });
 const salesTrend = [38, 48, 43, 56, 49, 67, 61, 75, 70, 84, 78, 100];
 
 export default function TopupSystemDetailPage({ systemId }: { systemId: string }) {
-  const { topupSystems } = useWorkspace();
+  const { topupSystems, setTopupSystemStatus } = useWorkspace();
   const [activeTab, setActiveTab] = useState("overview");
+  const [confirmStatus, setConfirmStatus] = useState<TopupSystem["status"] | null>(null);
   const system = topupSystems.find((item) => item.id === systemId);
   const isNsol = systemId === "nsol";
   const retailers = useMemo(() => isNsol ? initialSystemRetailers : [], [isNsol]);
@@ -27,9 +30,9 @@ export default function TopupSystemDetailPage({ systemId }: { systemId: string }
   return <div className="module-page system-detail-module">
     <div className="system-detail-back"><Link href="/admin-management">← <span>All top-up systems</span></Link><span className="system-breadcrumb-separator">/</span><span>{system.name}</span></div>
     <section className="system-detail-hero">
-      <div className="system-identity"><span className="system-brand-mark system-brand-large" style={{ background: `linear-gradient(145deg, ${system.accent}, #6385dc)` }}>{system.name.slice(0, 1)}</span><div><span className="system-active-pill"><i/>{system.status} system</span><h2>{system.name}</h2><p>{system.country} · Managed by Country Admin</p></div></div>
-      <div className="system-contact"><span>System contact</span><strong>{system.contactName}</strong><a href={`mailto:${system.contactEmail}`}>{system.contactEmail}</a></div>
-      <div className="system-health-summary"><i/>System services operational</div>
+      <div className="system-identity"><span className="system-brand-mark system-brand-large" style={{ background: `linear-gradient(145deg, ${system.accent}, #6385dc)` }}>{system.name.slice(0, 1)}</span><div><span className={`system-active-pill ${system.status === "Active" ? "" : "system-pending-pill"}`}><i/>{system.status} admin</span><h2>{system.name}</h2><p>{system.country} · Managed by Country Admin</p></div></div>
+      <div className="system-contact"><span>System contact</span><strong>{system.contactName}</strong><a href={`mailto:${system.contactEmail}`}>{system.contactEmail}</a>{system.contactPhone && <a href={`tel:${system.contactDialCode ?? ""}${system.contactPhone}`}>{system.contactDialCode} {system.contactPhone}</a>}</div>
+      <button className={`system-health-summary system-status-control ${system.status === "Active" ? "active" : "inactive"}`} type="button" onClick={() => setConfirmStatus(system.status === "Active" ? "Inactive" : "Active")}><i/>{system.status === "Active" ? "Set inactive" : "Set active"}<Icon name="arrow-right" size={14}/></button>
     </section>
     <nav className="system-section-nav" role="tablist" aria-label={`${system.name} sections`}>{[["overview", "Overview"], ["retailers", "Retailers"], ["sales", "Sales"], ["products", "Products"]].map(([id, label]) => <button type="button" role="tab" aria-selected={activeTab === id} className={activeTab === id ? "active" : ""} onClick={() => setActiveTab(id)} key={id}>{label}</button>)}</nav>
 
@@ -80,6 +83,19 @@ export default function TopupSystemDetailPage({ systemId }: { systemId: string }
         { label: "STATUS", render: (product) => <span className={`system-active-pill ${product.status === "Available" ? "" : "system-low-stock-pill"}`}><i/>{product.status}</span> },
       ]}/>
     </section>}
+    {confirmStatus && <SystemStatusConfirmation system={system} status={confirmStatus} onCancel={() => setConfirmStatus(null)} onConfirm={() => { setTopupSystemStatus(system.id, confirmStatus); setConfirmStatus(null); }}/>}
   </div>;
+}
+
+function SystemStatusConfirmation({ system, status, onCancel, onConfirm }: { system: TopupSystem; status: TopupSystem["status"]; onCancel: () => void; onConfirm: () => void }) {
+  if (typeof document === "undefined") return null;
+  const deactivating = status === "Inactive";
+  return createPortal(<div className={`${shellStyles.modalPortal} modal-viewport-backdrop`} onMouseDown={event => { if (event.target === event.currentTarget) onCancel(); }}>
+    <section className="modal admin-modal country-confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="system-status-title" aria-describedby="system-status-description">
+      <div className="modal-header"><div><span className={`modal-icon ${deactivating ? "danger" : ""}`}><Icon name="layers"/></span><div className="modal-title-copy"><span className="modal-eyebrow">ADMIN STATUS</span><h2 id="system-status-title">{deactivating ? "Deactivate admin?" : "Activate admin?"}</h2></div></div><button type="button" onClick={onCancel} aria-label="Close dialog">×</button></div>
+      <div className="country-confirm-body"><p id="system-status-description">{deactivating ? `${system.name} will be marked inactive in this country workspace.` : `${system.name} will be marked active in this country workspace.`}</p></div>
+      <div className="modal-actions"><button type="button" className="secondary-button" onClick={onCancel}>Cancel</button><button type="button" className={`primary-button ${deactivating ? "danger-button" : ""}`} onClick={onConfirm}>{deactivating ? "Set inactive" : "Set active"} <Icon name={deactivating ? "close" : "check"} size={15}/></button></div>
+    </section>
+  </div>, document.body);
 }
 

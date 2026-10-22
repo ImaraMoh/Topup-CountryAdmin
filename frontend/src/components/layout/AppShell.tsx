@@ -5,6 +5,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { countryOptions } from "@/data/country-options";
 import { Brand } from "@/components/auth/LoginPage";
 import Icon, { type IconName } from "@/components/shared/Icon";
 import styles from "./AppShell.module.css";
@@ -27,11 +28,13 @@ const titles: Record<string, string> = {
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { countries, topupSystems, profile, search, notice, modal, setSearch, clearSearch, dismissNotice, flash } = useWorkspace();
+  const { countries, topupSystems, profile, search, notice, modal, activity, setSearch, clearSearch, dismissNotice, flash } = useWorkspace();
   const [ready, setReady] = useState(false);
   const [authorized, setAuthorized] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notifications = activity.filter(item => item.category === "Admin" || item.category === "Country").slice(0, 8);
 
   const title = pathname.startsWith("/admin-management/")
     ? topupSystems.find(system => system.id === pathname.split("/")[2])?.name ?? "Top-up system"
@@ -126,7 +129,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <strong>{profile.name}</strong>
               <small>Country Admin</small>
             </span>
-            <span className="profile-more"><Icon name="arrow-up-right" size={14}/></span>
+            <span className="profile-more"><Icon name="arrow-right" size={14}/></span>
           </button>
         </div>
       </aside>
@@ -141,7 +144,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <span/><span/><span/>
             </button>
             <button className="header-sidebar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)} aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!sidebarCollapsed} title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
-              <span aria-hidden="true"><Icon name={sidebarCollapsed ? "arrow-up-right" : "close"} size={16}/></span>
+              <span aria-hidden="true"><Icon name={sidebarCollapsed ? "arrow-right" : "arrow-left"} size={16}/></span>
             </button>
 
             <div className="breadcrumbs">
@@ -161,10 +164,36 @@ export default function AppShell({ children }: { children: ReactNode }) {
               />
               {search && <button onClick={clearSearch} aria-label="Clear search">×</button>}
             </label>
+            <button
+              className="notification-toggle"
+              type="button"
+              aria-label="Open notifications"
+              aria-expanded={notificationsOpen}
+              onClick={() => setNotificationsOpen(open => !open)}
+            >
+              <Icon name="bell" size={18}/>
+              {notifications.length > 0 && <span className="notification-count">{notifications.length > 9 ? "9+" : notifications.length}</span>}
+            </button>
             <span className="top-divider"/>
             <button className="avatar top-avatar" onClick={logout} aria-label="Sign out">{initialsFor(profile.name)}</button>
           </div>
         </header>
+
+        {notificationsOpen && <>
+          <button className="notification-backdrop" type="button" aria-label="Close notifications" onClick={() => setNotificationsOpen(false)}/>
+          <section className="notification-drawer" aria-label="Notifications" aria-live="polite">
+            <div className="notification-drawer-header">
+              <div><span className="notification-eyebrow">WORKSPACE UPDATES</span><h2>Notifications</h2></div>
+              <button type="button" onClick={() => setNotificationsOpen(false)} aria-label="Close notifications"><Icon name="close" size={17}/></button>
+            </div>
+            {notifications.length ? <div className="notification-list">
+              {notifications.map(item => <article className="notification-item" key={item.id}>
+                <span className={`notification-item-icon ${item.category.toLowerCase()}`}><Icon name={item.category === "Country" ? "globe" : "user"} size={16}/></span>
+                <div className="notification-item-copy"><p><strong>{item.name}</strong> {item.action} <b>{item.target}</b></p><span>{item.category} · {item.time}</span></div>
+              </article>)}
+            </div> : <div className="notification-empty"><span><Icon name="bell" size={21}/></span><strong>You’re all caught up</strong><p>Admin and country updates will appear here.</p></div>}
+          </section>
+        </>}
 
         <div className="content">
           {children}
@@ -191,8 +220,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
 }
 
 function WorkspaceModal() {
-  const { modal, addCountry, openModal } = useWorkspace();
+  const { modal, addCountry, openModal, countries } = useWorkspace();
+  const [selectedCode, setSelectedCode] = useState("");
   if (!modal || typeof document === "undefined") return null;
+  const availableCountries = countryOptions.filter(option => !countries.some(country => country.code === option.code || country.name.toLocaleLowerCase() === option.name.toLocaleLowerCase()));
+  const selectedCountry = availableCountries.find(country => country.code === selectedCode);
 
   return createPortal(
     <div className={`${styles.modalPortal} modal-viewport-backdrop`} onMouseDown={event => { if (event.target === event.currentTarget) openModal(null); }}>
@@ -200,10 +232,11 @@ function WorkspaceModal() {
         <div className="modal-header"><div><span className="modal-icon"><Icon name="globe"/></span><div className="modal-title-copy"><span className="modal-eyebrow">COUNTRY COVERAGE</span><h2 id="modal-title">Add country</h2><p>Add a country to your workspace.</p></div></div><button type="button" onClick={() => openModal(null)} aria-label="Close dialog">×</button></div>
         <form onSubmit={addCountry}>
           <div className="admin-form-grid">
-            <div className="admin-form-field"><label htmlFor="country-name">Country name</label><input id="country-name" name="name" placeholder="e.g. New Zealand" required/></div>
-            <div className="admin-form-field"><label htmlFor="country-code">Country code</label><input id="country-code" name="code" placeholder="NZ" maxLength={3} required/></div>
-            <div className="admin-form-field"><label htmlFor="country-region">Region</label><select id="country-region" name="region"><option>Asia Pacific</option><option>Europe</option><option>North America</option><option>South America</option><option>Africa</option><option>Middle East</option></select></div>
+            <div className="admin-form-field"><label htmlFor="country-name">Country</label><select id="country-name" name="code" value={selectedCode} onChange={event => setSelectedCode(event.target.value)} required><option value="" disabled>Select a country</option>{availableCountries.map(country => <option key={country.code} value={country.code}>{country.name}</option>)}</select></div>
+            <div className="admin-form-field"><label htmlFor="country-code">Country code</label><input id="country-code" value={selectedCountry?.code ?? ""} placeholder="Auto-filled" readOnly/></div>
+            <div className="admin-form-field"><label htmlFor="country-region">Region</label><input id="country-region" value={selectedCountry?.region ?? ""} placeholder="Auto-filled" readOnly/></div>
           </div>
+          {availableCountries.length === 0 && <p className="country-list-empty">Every country is already in this workspace.</p>}
           <ModalActions onCancel={() => openModal(null)} submit="Add country"/>
         </form>
       </section>
@@ -215,7 +248,7 @@ function ModalActions({ onCancel, submit }: { onCancel: () => void; submit: stri
   return (
     <div className="modal-actions">
       <button type="button" className="secondary-button" onClick={onCancel}>Cancel</button>
-      <button type="submit" className="primary-button">{submit} <Icon name="arrow-up-right" size={15}/></button>
+      <button type="submit" className="primary-button">{submit} <Icon name="arrow-right" size={15}/></button>
     </div>
   );
 }

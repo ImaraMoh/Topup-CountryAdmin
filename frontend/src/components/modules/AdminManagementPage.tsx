@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { CountryCode, getCountryCallingCode, isValidPhoneNumber, validatePhoneNumberLength } from "libphonenumber-js";
 import { initialSystemProducts, initialSystemRetailers } from "@/data/initial-data";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import PageHeading from "@/components/shared/PageHeading";
@@ -30,7 +31,7 @@ export default function AdminManagementPage() {
     <PageHeading eyebrow="PLATFORM & TENANT MANAGEMENT" title="Admin management" description="Manage top-up systems in your country network." action={<button className="primary-button" onClick={() => setAddAdminOpen(true)}><Icon name="plus" size={15}/> Add admin</button>}/>
     <section className="overview-kpis module-kpis" aria-label="Admin management key metrics">
       <article className="overview-kpi kpi-purple"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="user"/></span><span className="kpi-trend">Systems</span></div><span className="overview-kpi-label">Top-up admins</span><strong>{topupSystems.length}</strong><small>Managed systems</small></article>
-      <article className="overview-kpi kpi-green"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="check"/></span><span className="kpi-trend">Active</span></div><span className="overview-kpi-label">Active admins</span><strong>{activeSystems}</strong><small>{topupSystems.length-activeSystems} in setup</small></article>
+      <article className="overview-kpi kpi-green"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="check"/></span><span className="kpi-trend">Active</span></div><span className="overview-kpi-label">Active admins</span><strong>{activeSystems}</strong><small>{topupSystems.length-activeSystems} inactive</small></article>
       <article className="overview-kpi kpi-blue"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="grid"/></span><span className="kpi-trend">Network</span></div><span className="overview-kpi-label">Retailers</span><strong>{totalRetailers}</strong><small>Across systems</small></article>
       <article className="overview-kpi kpi-amber"><div className="overview-kpi-top"><span className="overview-kpi-icon"><Icon name="package"/></span><span className="kpi-status all-clear">Catalog</span></div><span className="overview-kpi-label">Products</span><strong>{totalProducts}</strong><small>Available products</small></article>
     </section>
@@ -41,19 +42,70 @@ export default function AdminManagementPage() {
         <div className="system-card-title"><h3>{system.name}</h3><span className="system-country-tag">{countryFlag(system.country)} &nbsp;{system.country}</span></div>
         <p className="system-card-contact">Admin contact <strong>{system.contactName}</strong> · {system.contactEmail}</p>
         <div className="system-card-stats"><div><strong>{system.id === "nsol" ? initialSystemRetailers.length : 0}</strong><span>Retailers</span></div><div><strong>{system.id === "nsol" ? initialSystemProducts.length : 0}</strong><span>Products</span></div><div><strong>{system.id === "nsol" ? `LKR ${(initialSystemRetailers.reduce((sum, retailer) => sum + retailer.sales, 0) / 1000).toFixed(0)}k` : "—"}</strong><span>Sales tracked</span></div></div>
-        <div className="system-card-footer"><span>Admin since {system.created}</span><span className="system-open-label">View admin details <b><Icon name="arrow-up-right" size={14}/></b></span></div>
+        <div className="system-card-footer"><span>Admin since {system.created}</span><span className="system-open-label">View admin details <b><Icon name="arrow-right" size={14}/></b></span></div>
       </Link>)}{systems.length === 0 && <div className="system-directory-empty">No top-up admins match “{search}”.</div>}</div>
       <Pagination page={currentPage} pageSize={pageSize} totalItems={systems.length} onPageChange={setPage} onPageSizeChange={setPageSize}/>
     </section>
-    {addAdminOpen && <TopupAdminModal countries={countries.map((country) => country.name)} onClose={() => setAddAdminOpen(false)} onSubmit={submitAdmin}/>}
+    {addAdminOpen && <TopupAdminModal countries={countries} onClose={() => setAddAdminOpen(false)} onSubmit={submitAdmin}/>}
   </div>;
 }
 
-function TopupAdminModal({ countries, onClose, onSubmit }: { countries: string[]; onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void }) {
+function TopupAdminModal({ countries, onClose, onSubmit }: { countries: Array<{ name: string; code: string }>; onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void }) {
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]?.name ?? "");
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const phoneInput = useRef<HTMLInputElement>(null);
+  const selectedCountryCode = countries.find((country) => country.name === selectedCountry)?.code;
+  let dialCode = "";
+  try { if (selectedCountryCode) dialCode = getCountryCallingCode(selectedCountryCode.toUpperCase() as CountryCode); } catch { /* Keep the number field usable if metadata is unavailable. */ }
+
+  function phoneLengthError(value: string, countryCode = selectedCountryCode) {
+    if (!value) return "Enter a contact number.";
+    if (!countryCode) return "Select a country with a valid calling code.";
+    const length = validatePhoneNumberLength(value, countryCode.toUpperCase() as CountryCode);
+    if (length === "TOO_SHORT") return "This number has too few digits for the selected country.";
+    if (length === "TOO_LONG") return "This number has too many digits for the selected country.";
+    if (length === "INVALID_LENGTH") return "This number has an invalid length for the selected country.";
+    if (!isValidPhoneNumber(value, countryCode.toUpperCase() as CountryCode)) return "Enter a valid contact number for the selected country.";
+    return "";
+  }
+
+  function changePhone(event: ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value.replace(/\D/g, "");
+    if (selectedCountryCode && value) {
+      const length = validatePhoneNumberLength(value, selectedCountryCode.toUpperCase() as CountryCode);
+      if (length === "TOO_LONG") {
+        setPhoneError("This number has reached the maximum length for the selected country.");
+        return;
+      }
+    }
+    setPhone(value);
+    setPhoneError(value ? phoneLengthError(value) : "");
+    event.target.setCustomValidity("");
+  }
+
+  function changeCountry(event: ChangeEvent<HTMLSelectElement>) {
+    setSelectedCountry(event.target.value);
+    setPhoneError(phone ? phoneLengthError(phone, countries.find((country) => country.name === event.target.value)?.code) : "");
+    phoneInput.current?.setCustomValidity("");
+  }
+
+  function validateAndSubmit(event: FormEvent<HTMLFormElement>) {
+    const error = phoneLengthError(phone);
+    if (error) {
+      event.preventDefault();
+      setPhoneError(error);
+      phoneInput.current?.setCustomValidity(error);
+      phoneInput.current?.reportValidity();
+      return;
+    }
+    onSubmit(event);
+  }
+
   if (typeof document === "undefined") return null;
   return createPortal(<div className={`${shellStyles.modalPortal} modal-viewport-backdrop`} onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="modal admin-modal" role="dialog" aria-modal="true" aria-labelledby="topup-admin-modal-title">
-    <div className="modal-header"><div><span className="modal-icon"><Icon name="user"/></span><div className="modal-title-copy"><span className="modal-eyebrow">SYSTEM ACCESS</span><h2 id="topup-admin-modal-title">Add admin</h2><p>Add a top-up system to your country network.</p></div></div><button type="button" onClick={onClose} aria-label="Close dialog">×</button></div>
-    <form onSubmit={onSubmit}><div className="admin-form-grid"><div className="admin-form-field"><label htmlFor="topup-admin-name">System name</label><input id="topup-admin-name" name="name" placeholder="e.g. NSOL E-PIN" required/></div><div className="admin-form-field"><label htmlFor="topup-admin-contact">Contact name</label><input id="topup-admin-contact" name="contactName" placeholder="e.g. Nsol Operations" required/></div><div className="admin-form-field"><label htmlFor="topup-admin-email">Contact email</label><input id="topup-admin-email" name="email" type="email" placeholder="operations@example.com" required/></div><div className="admin-form-field"><label htmlFor="topup-admin-country">Country</label><select id="topup-admin-country" name="country" required>{countries.map((country) => <option key={country}>{country}</option>)}</select></div></div><div className="modal-actions"><button type="button" className="secondary-button" onClick={onClose}>Cancel</button><button type="submit" className="primary-button">Add admin <span><Icon name="arrow-up-right" size={14}/></span></button></div></form>
+    <div className="modal-header"><div><span className="modal-icon"><Icon name="user"/></span><div className="modal-title-copy"><span className="modal-eyebrow">SYSTEM ACCESS</span><h2 id="topup-admin-modal-title">Add admin</h2></div></div><button type="button" onClick={onClose} aria-label="Close dialog">×</button></div>
+    <form onSubmit={validateAndSubmit}><div className="admin-form-grid"><div className="admin-form-field"><label htmlFor="topup-admin-name">System name</label><input id="topup-admin-name" name="name" placeholder="e.g. NSOL E-PIN" required/></div><div className="admin-form-field"><label htmlFor="topup-admin-contact">Contact name</label><input id="topup-admin-contact" name="contactName" placeholder="e.g. Nsol Operations" required/></div><div className="admin-form-field"><label htmlFor="topup-admin-email">Contact email</label><input id="topup-admin-email" name="email" type="email" placeholder="operations@example.com" required/></div><div className="admin-form-field"><label htmlFor="topup-admin-country">Country</label><select id="topup-admin-country" name="country" value={selectedCountry} onChange={changeCountry} required>{countries.map((country) => <option key={country.code} value={country.name}>{country.name}</option>)}</select></div><div className="admin-form-field admin-phone-field"><label htmlFor="topup-admin-phone">Contact number</label><div className="admin-phone-control"><span aria-label={`Country calling code plus ${dialCode}`}>+{dialCode || "—"}</span><input ref={phoneInput} id="topup-admin-phone" name="phone" type="tel" inputMode="numeric" autoComplete="tel-national" value={phone} onChange={changePhone} onBlur={() => setPhoneError(phone ? phoneLengthError(phone) : "")} maxLength={15} placeholder="Phone number" required aria-describedby={phoneError ? "topup-phone-error" : undefined}/></div>{phoneError && <small id="topup-phone-error" className="admin-phone-error" role="status">{phoneError}</small>}<input type="hidden" name="dialCode" value={dialCode}/></div></div><div className="modal-actions"><button type="button" className="secondary-button" onClick={onClose}>Cancel</button><button type="submit" className="primary-button">Add admin <span><Icon name="arrow-right" size={14}/></span></button></div></form>
   </section></div>, document.body);
 }
 

@@ -15,7 +15,7 @@ export type Country = {
   name: string;
   code: string;
   region: string;
-  status: "Active" | "Setup";
+  status: "Active" | "Inactive";
   admins: number;
   flag: string;
 };
@@ -38,9 +38,11 @@ export type TopupSystem = {
   id: string;
   name: string;
   country: string;
-  status: "Active" | "Setup";
+  status: "Active" | "Inactive";
   contactName: string;
   contactEmail: string;
+  contactPhone?: string;
+  contactDialCode?: string;
   created: string;
   accent: string;
 };

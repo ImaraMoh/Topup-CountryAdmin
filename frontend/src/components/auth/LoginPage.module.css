@@ -36,6 +36,8 @@
 .root :global(.brand-mark) { display:flex; align-items:center; gap:10px; color:#2d1b3e; font-size:18px; font-weight:800; letter-spacing:-.045em; }
 .root :global(.brand-icon) { display:grid; width:35px; height:35px; place-items:center; border-radius:11px; background:linear-gradient(145deg,#966eb5,#573472); color:#fff; box-shadow:0 7px 16px #50306932; }
 .root :global(.brand-light) { color:#83778f; font-weight:650; }
+.root :global(.brand-icon.has-uploaded-logo) { overflow:hidden; padding:0; background:#fff; }
+.root :global(.brand-logo-image) { display:block; width:100%; height:100%; object-fit:contain; padding:3px; }
 .root :global(.login-single-heading),.root :global(.login-single-card form),.root :global(.login-single-card > .demo-hint),.root :global(.login-single-footer),.root :global(.help-message) { position: relative; z-index: 1; }
 .root :global(.login-single-heading) { margin-bottom: 21px; }
 .root :global(.welcome-icon) { display: grid; width: 42px; height: 42px; place-items: center; margin: 0 auto 13px; border: 1px solid #e8e8f3; border-radius: 13px; background: linear-gradient(145deg,#f0efff,#eff5ff); color: #695fc3; }
@@ -74,6 +76,7 @@
 
 .root { background:radial-gradient(ellipse at 15% 12%,#e8def2 0,transparent 34%),radial-gradient(ellipse at 87% 82%,#efe8f4 0,transparent 36%),#f7f4fa; }
 .root :global(.brand-icon),.root :global(.sign-in) { background:linear-gradient(110deg,#5c347e,#875db0); }
+.root :global(.brand-icon.has-uploaded-logo) { background:#fff; }
 .root :global(.welcome-icon),.root :global(.demo-hint > span) { background:#f1e9f7; color:#634087; }
 .root :global(.eyebrow),.root :global(.password-label button),.root :global(.demo-hint code) { color:#68418d; }
 .root :global(.sign-in) { box-shadow:0 9px 22px #59357737; }

@@ -1,0 +1,66 @@
+.page { --settings-ink:#30213f; --settings-muted:#796c87; --settings-line:#e9e1f0; --settings-violet:#704a93; }
+.layout { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); gap:23px; align-items:stretch; margin-top:22px; }
+.profileCard,.notificationsCard { position:relative; isolation:isolate; min-width:0; overflow:hidden; padding:27px; border:1px solid rgba(255,255,255,.9); border-radius:25px; background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(250,246,253,.88)); box-shadow:0 18px 55px rgba(55,34,76,.09),inset 0 1px 0 rgba(255,255,255,.9); backdrop-filter:blur(20px); animation:cardEnter .45s cubic-bezier(.2,.7,.2,1) both; }
+.notificationsCard { animation-delay:.07s; }
+.profileCard::before,.notificationsCard::before { position:absolute; z-index:-1; top:-118px; right:-100px; width:260px; height:260px; border:1px solid rgba(132,91,165,.11); border-radius:50%; content:""; }
+.profileCard::after,.notificationsCard::after { position:absolute; z-index:-1; top:-82px; right:-66px; width:190px; height:190px; border-radius:50%; background:radial-gradient(circle,rgba(147,110,178,.12),rgba(147,110,178,0) 70%); content:""; }
+.cardTopline { display:flex; min-height:38px; align-items:center; gap:10px; }
+.sectionIcon { display:grid; width:38px; height:38px; flex:0 0 38px; place-items:center; border:1px solid #e9dff1; border-radius:13px; background:linear-gradient(145deg,#f7effb,#ede5f7); color:#704a93; box-shadow:0 5px 14px rgba(91,55,121,.08); }
+.notificationIcon { border-color:#e6dff5; background:linear-gradient(145deg,#f1edfc,#e8e8fb); color:#695caa; }
+.eyebrow { color:#88749b; font-size:11px; font-weight:800; letter-spacing:.15em; }
+.accountBadge,.preferencesBadge { display:inline-flex; min-height:28px; align-items:center; gap:7px; margin-left:auto; padding:0 10px; border:1px solid #e7e0ec; border-radius:20px; background:rgba(255,255,255,.72); color:#746582; font-size:11px; font-weight:700; }
+.accountBadge > span { width:7px; height:7px; border-radius:50%; background:#45a885; box-shadow:0 0 0 3px #45a8851c; }
+.preferencesBadge { border-color:#e4dcf0; background:#f7f2fa; color:#765892; }
+.cardTitle { display:flex; align-items:center; gap:13px; margin:0 0 12px; }
+.cardTitle h2 { margin:0; color:var(--settings-ink); font-size:23px; font-weight:780; letter-spacing:-.035em; }
+.cardTitle p { margin:6px 0 0; color:var(--settings-muted); font-size:14px; line-height:1.5; }
+.brandPanel { display:flex; min-height:82px; flex-wrap:wrap; align-items:center; gap:14px; padding:14px 16px; border:1px solid rgba(229,218,238,.92); border-radius:18px; background:linear-gradient(110deg,rgba(249,245,252,.97),rgba(255,255,255,.9)); box-shadow:0 7px 20px rgba(67,43,86,.045); }
+.brandPreview { display:grid; width:48px; height:48px; overflow:hidden; place-items:center; border:1px solid #e8deef; border-radius:15px; background:linear-gradient(145deg,#704a93,#966fba); box-shadow:0 6px 15px #6849862a; color:#fff; font-size:22px; font-weight:800; }
+.brandPreview img { width:100%; height:100%; object-fit:contain; padding:4px; }
+.brandActions { display:grid; min-width:0; gap:4px; }
+.brandActions strong { color:#38284a; font-size:16px; font-weight:780; white-space:nowrap; }
+.brandActions span { color:#82758e; font-size:12px; }
+.uploadActions { display:flex; align-items:center; gap:6px; }
+.brandPanel > .uploadActions { margin-left:auto; }
+.adminDetailsHeading { display:flex; align-items:center; gap:12px; margin-top:23px; }
+.profileCard > .adminDetailsHeading:first-child { margin-top:0; margin-bottom:17px; }
+.adminDetailsHeading h2 { margin:0; color:var(--settings-ink); font-size:20px; font-weight:780; letter-spacing:-.03em; }
+.adminDetailsHeading p { margin:3px 0 0; color:var(--settings-muted); font-size:12px; }
+.fileInput { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; clip-path:inset(50%); }
+.uploadButton,.removeButton { display:inline-flex; min-height:34px; align-items:center; justify-content:center; gap:6px; padding:0 10px; border:1px solid #ded3e9; border-radius:10px; background:linear-gradient(145deg,#fff,#f7f2fa); color:#664582; font-size:11px; font-weight:750; white-space:nowrap; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+.uploadButton:hover,.removeButton:hover { transform:translateY(-1px); border-color:#bda9d0; box-shadow:0 6px 14px #5e397814; }
+.uploadButton:focus-visible,.removeButton:focus-visible,.saveButton:focus-visible { outline:3px solid #9875b84a; outline-offset:2px; }
+.removeButton { min-width:48px; padding:0 8px; background:rgba(255,255,255,.7); color:#8d6274; }
+.logoMessage { flex-basis:calc(100% - 62px); margin-left:62px; color:#66856f; font-size:11px; }
+.fields { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:21px; }
+.field { display:grid; min-width:0; gap:7px; }
+.field > span { color:#5f506c; font-size:12px; font-weight:740; }
+.fieldControl { display:flex; min-width:0; height:47px; align-items:center; gap:10px; padding:0 12px; border:1px solid #e7deed; border-radius:12px; background:rgba(255,255,255,.74); color:#957fa5; transition:border-color .18s ease,box-shadow .18s ease,background .18s ease; }
+.fieldControl:focus-within { border-color:#ad91c3; background:#fff; box-shadow:0 0 0 4px rgba(121,78,157,.1); }
+.fieldControl input { width:100%; min-width:0; border:0; outline:0; background:transparent; color:#392a49; font-size:14px; }
+.fieldControl input::placeholder { color:#aea2b8; }
+.notificationList { margin-top:4px; }
+.preferenceRow { display:flex; min-height:88px; align-items:center; gap:14px; padding:14px 1px; border-bottom:1px solid #eee7f2; cursor:pointer; transition:padding .2s ease,background .2s ease; }
+.preferenceRow:hover { padding-right:9px; padding-left:9px; border-radius:13px; background:rgba(248,244,251,.8); }
+.preferenceIcon { display:grid; width:39px; height:39px; flex:0 0 39px; place-items:center; border:1px solid #ebe3f2; border-radius:13px; background:linear-gradient(145deg,#faf7fc,#f1ebf7); color:#7c5c96; }
+.preferenceCopy { display:grid; min-width:0; flex:1; gap:4px; }
+.preferenceCopy strong { color:#41304f; font-size:14px; font-weight:750; }
+.preferenceCopy small { color:#82758c; font-size:12px; line-height:1.5; }
+.toggleControl { position:relative; display:block; width:45px; height:26px; flex:0 0 45px; }
+.toggleControl input { position:absolute; inset:0; z-index:2; width:100%; height:100%; margin:0; cursor:pointer; opacity:0; }
+.toggleControl i { position:absolute; inset:0; border:1px solid #dcd3e3; border-radius:20px; background:#ebe6ef; transition:background .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.toggleControl i::after { position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:white; box-shadow:0 2px 5px #31243b24; content:""; transition:transform .2s cubic-bezier(.2,.8,.2,1); }
+.toggleControl input:checked + i { border-color:#775294; background:linear-gradient(100deg,#704a93,#9671b4); box-shadow:0 3px 10px #704a9327; }
+.toggleControl input:checked + i::after { transform:translateX(19px); }
+.toggleControl input:focus-visible + i { outline:3px solid #9875b84a; outline-offset:3px; }
+.actions { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:19px; }
+.saveStatus { display:flex; align-items:center; gap:8px; color:#897c93; font-size:11px; }
+.statusDot,.savedDot { width:7px; height:7px; border-radius:50%; background:#aa9ab6; }
+.savedDot { background:#43a580; box-shadow:0 0 0 4px #43a5801c; }
+.saveButton { display:inline-flex; min-height:43px; align-items:center; justify-content:center; gap:10px; padding:0 16px; border:1px solid #684486; border-radius:12px; background:linear-gradient(110deg,#684486,#8861a3); color:#fff; box-shadow:0 8px 18px #6540802b; font-size:13px; font-weight:750; transition:transform .18s ease,box-shadow .18s ease; }
+.saveButton:hover { transform:translateY(-2px); box-shadow:0 11px 22px #6540803b; }
+@keyframes cardEnter { from { opacity:0; transform:translateY(9px); } to { opacity:1; transform:translateY(0); } }
+@media (max-width:1100px) { .layout { grid-template-columns:1fr; } .profileCard,.notificationsCard { padding:25px; } }
+@media (max-width:640px) { .layout { gap:15px; margin-top:16px; } .profileCard,.notificationsCard { padding:19px; border-radius:20px; } .cardTitle { margin:0 0 12px; } .cardTitle h2 { font-size:21px; } .cardTitle p { font-size:13px; } .brandPanel { gap:10px; padding:12px; } .brandPreview { width:44px; height:44px; flex:0 0 44px; } .brandActions strong { font-size:14px; } .brandActions span { font-size:11px; } .uploadActions { gap:5px; } .uploadButton { padding:0 9px; font-size:10px; } .removeButton { min-width:0; } .logoMessage { flex-basis:calc(100% - 54px); margin-left:54px; } .adminDetailsHeading { margin-top:19px; } .profileCard > .adminDetailsHeading:first-child { margin-top:0; } .fields { grid-template-columns:1fr; gap:12px; margin-top:15px; } .preferenceRow { min-height:82px; gap:10px; } .preferenceIcon { width:35px; height:35px; flex-basis:35px; } .preferenceCopy strong { font-size:13px; } .preferenceCopy small { font-size:11px; } .actions { align-items:flex-start; flex-direction:column; } .saveButton { width:100%; } }
+@media (max-width:390px) { .brandPanel { flex-wrap:wrap; } .brandPanel > .uploadActions { margin-left:auto; } .eyebrow { font-size:10px; } .uploadActions { gap:5px; } .uploadButton { padding:0 8px; font-size:10px; } }
+@media (prefers-reduced-motion:reduce) { .profileCard,.notificationsCard { animation:none; } .uploadButton,.removeButton,.preferenceRow,.toggleControl i,.toggleControl i::after,.saveButton { transition:none; } }

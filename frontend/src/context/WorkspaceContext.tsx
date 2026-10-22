@@ -2,6 +2,7 @@
 
 import { createContext, FormEvent, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { initialActivity, initialAdmins, initialCountries, initialProfile, initialSettings, initialTopupSystems } from "@/data/initial-data";
+import { countryOptions } from "@/data/country-options";
 import type { Activity, Admin, Country, Profile, TopupSystem, WorkspaceSettings } from "@/types/admin";
 
 type WorkspaceContextValue = {
@@ -30,6 +31,7 @@ type WorkspaceContextValue = {
   resendInvite: (admin: Admin) => void;
   removeCountry: (country: Country) => void;
   toggleCountryStatus: (country: Country) => void;
+  setTopupSystemStatus: (systemId: string, status: TopupSystem["status"]) => void;
   saveSettings: (profile: Profile, settings: WorkspaceSettings) => void;
   record: (action: string, target: string, category: Activity["category"]) => void;
 };
@@ -58,14 +60,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         const storedSettings = localStorage.getItem("country-admin-settings");
         if (storedAdmins) setAdmins(JSON.parse(storedAdmins));
         if (storedTopupSystems) {
-          const savedSystems = JSON.parse(storedTopupSystems) as TopupSystem[];
+          const savedSystems = (JSON.parse(storedTopupSystems) as Array<TopupSystem & { status: string }>).map((system) => ({ ...system, status: system.status === "Active" ? "Active" as const : "Inactive" as const }));
           const savedById = new Map(savedSystems.map((system) => [system.id, system]));
           const seededIds = new Set(initialTopupSystems.map((system) => system.id));
           const mergedSystems = [...initialTopupSystems.map((system) => savedById.get(system.id) ?? system), ...savedSystems.filter((system) => !seededIds.has(system.id))];
           setTopupSystems(mergedSystems);
           localStorage.setItem("country-admin-topup-systems", JSON.stringify(mergedSystems));
         }
-        if (storedCountries) setCountries(JSON.parse(storedCountries));
+        if (storedCountries) {
+          const savedCountries = JSON.parse(storedCountries) as Array<Country & { status: string }>;
+          const normalizedCountries = savedCountries.map((country) => ({ ...country, status: country.status === "Active" ? "Active" as const : "Inactive" as const }));
+          setCountries(normalizedCountries);
+          localStorage.setItem("country-admin-countries", JSON.stringify(normalizedCountries));
+        }
         if (storedActivity) {
           const savedEvents = JSON.parse(storedActivity) as Activity[];
           const savedEventIds = new Set(savedEvents.map((item) => item.id));
@@ -107,8 +114,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const id = topupSystems.some((system) => system.id === baseId) ? `${baseId}-${Date.now()}` : baseId;
     const contactName = String(data.get("contactName")).trim();
     const next: TopupSystem[] = [{
-      id, name, country: String(data.get("country")), status: "Setup", contactName,
-      contactEmail: String(data.get("email")).trim(), created: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
+      id, name, country: String(data.get("country")), status: "Inactive", contactName,
+      contactEmail: String(data.get("email")).trim(), contactPhone: String(data.get("phone")).trim(), contactDialCode: `+${String(data.get("dialCode")).trim()}`, created: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
       accent: "#7762c8",
     }, ...topupSystems];
     setTopupSystems(next);
@@ -120,17 +127,21 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   function addCountry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const name = String(data.get("name")).trim();
     const code = String(data.get("code")).trim().toUpperCase();
+    const selectedCountry = countryOptions.find((country) => country.code === code);
+    if (!selectedCountry) {
+      flash("Choose a country from the list.");
+      return;
+    }
     if (countries.some(country => country.code.toLowerCase() === code.toLowerCase())) {
       flash(`A country with code ${code} already exists.`);
       return;
     }
-    const next: Country[] = [{ id: Date.now(), name, code, region: String(data.get("region")), status: "Setup", admins: 0, flag: "🌐" }, ...countries];
+    const next: Country[] = [{ id: Date.now(), name: selectedCountry.name, code: selectedCountry.code, region: selectedCountry.region, status: "Active", admins: 0, flag: "🌐" }, ...countries];
     saveCountries(next);
-    record("added a country to", name, "Country");
+    record("added a country to", selectedCountry.name, "Country");
     setModal(null);
-    flash(`${name} has been added.`);
+    flash(`${selectedCountry.name} has been added.`);
     event.currentTarget.reset();
   }
   function saveAdmins(next: Admin[]) {
@@ -148,6 +159,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   }
   function setAdminStatus(admin: Admin, status: Admin["status"]) {
     saveAdmins(admins.map(item => item.id === admin.id ? { ...item, status } : item));
+    record(`changed admin status to ${status.toLowerCase()} for`, admin.name, "Admin");
     flash(`${admin.name} marked as ${status.toLowerCase()}.`);
   }
   function resendInvite(admin: Admin) {
@@ -163,9 +175,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     flash(`${country.name} removed.`);
   }
   function toggleCountryStatus(country: Country) {
-    const status = country.status === "Active" ? "Setup" : "Active";
+    const status = country.status === "Active" ? "Inactive" : "Active";
     saveCountries(countries.map(item => item.id === country.id ? { ...item, status } : item));
+    record(`changed country status to ${status.toLowerCase()} for`, country.name, "Country");
     flash(`${country.name} status updated.`);
+  }
+  function setTopupSystemStatus(systemId: string, status: TopupSystem["status"]) {
+    const system = topupSystems.find((item) => item.id === systemId);
+    if (!system || system.status === status) return;
+    const next = topupSystems.map((item) => item.id === systemId ? { ...item, status } : item);
+    setTopupSystems(next);
+    localStorage.setItem("country-admin-topup-systems", JSON.stringify(next));
+    record(`changed admin status to ${status.toLowerCase()} for`, system.name, "Admin");
+    flash(`${system.name} status changed to ${status.toLowerCase()}.`);
   }
   function saveSettings(nextProfile: Profile, nextSettings: WorkspaceSettings) {
     setProfile(nextProfile);
@@ -184,7 +206,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const value: WorkspaceContextValue = {
     admins, topupSystems, countries, activity, profile, settings, search, notice, modal, countriesWithAdminCounts,
     setSearch, clearSearch: () => setSearch(""), updateProfile: setProfile, updateSettings: setSettings, openModal: setModal, dismissNotice: () => setNotice(""), flash,
-    addAdmin, addTopupAdmin, addCountry, removeAdmins, setAdminStatus, resendInvite, removeCountry, toggleCountryStatus, saveSettings, record,
+    addAdmin, addTopupAdmin, addCountry, removeAdmins, setAdminStatus, resendInvite, removeCountry, toggleCountryStatus, setTopupSystemStatus, saveSettings, record,
   };
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;

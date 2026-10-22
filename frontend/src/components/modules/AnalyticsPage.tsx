@@ -50,7 +50,7 @@ export default function AnalyticsPage() {
         </div>
       </section>
       <section className="analytics-card region-analytics">
-        <div className="card-heading"><div><h3>Country coverage</h3><p>Countries by region</p></div><Link className="secondary-button" href="/countries">View countries <span className="button-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></Link></div>
+        <div className="card-heading"><div><h3>Country coverage</h3><p>Countries by region</p></div><Link className="secondary-button" href="/countries">View countries <span className="button-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></Link></div>
         <div className="region-analytics-list">{regionRows.map(({ region, count, percent }) => <div className="region-analytics-row" key={region}><div><span>{region}</span><strong>{count}</strong></div><div className="region-progress"><i style={{ width: `${percent}%` }}/></div><small>{percent}% of workspace</small></div>)}</div>
       </section>
     </div>

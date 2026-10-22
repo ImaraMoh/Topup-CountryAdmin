@@ -1,6 +1,6 @@
 import type { ReactNode, SVGProps } from "react";
 
-export type IconName = "grid" | "chart" | "layers" | "globe" | "clock" | "settings" | "search" | "bell" | "user" | "shield" | "sparkles" | "check" | "plus" | "arrow-up-right" | "package" | "close" | "mail" | "pin" | "activity";
+export type IconName = "grid" | "chart" | "layers" | "globe" | "clock" | "settings" | "search" | "bell" | "user" | "shield" | "sparkles" | "check" | "plus" | "arrow-up-right" | "arrow-right" | "arrow-left" | "package" | "close" | "mail" | "pin" | "activity";
 
 type IconProps = SVGProps<SVGSVGElement> & { name: IconName; size?: number; strokeWidth?: number };
 
@@ -19,6 +19,8 @@ const paths: Record<IconName, ReactNode> = {
   check: <><path d="m5 12 4.5 4.5L19 7"/></>,
   plus: <><path d="M12 5v14M5 12h14"/></>,
   "arrow-up-right": <><path d="M7 17 17 7M8 7h9v9"/></>,
+  "arrow-right": <><path d="M5 12h14M13 6l6 6-6 6"/></>,
+  "arrow-left": <><path d="M19 12H5m6 6-6-6 6-6"/></>,
   package: <><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4.5 7.8 7.5 4.3 7.5-4.3M12 12v9M8 5.3l8 4.5"/></>,
   close: <><path d="m6 6 12 12M18 6 6 18"/></>,
   mail: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></>,

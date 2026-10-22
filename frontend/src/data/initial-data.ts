@@ -13,10 +13,10 @@ export const initialCountries: Country[] = [
   { id: 2, name: "United Kingdom", code: "GB", region: "Europe", status: "Active", admins: 8, flag: "🇬🇧" },
   { id: 3, name: "Canada", code: "CA", region: "North America", status: "Active", admins: 6, flag: "🇨🇦" },
   { id: 4, name: "Australia", code: "AU", region: "Asia Pacific", status: "Active", admins: 5, flag: "🇦🇺" },
-  { id: 5, name: "Singapore", code: "SG", region: "Asia Pacific", status: "Setup", admins: 3, flag: "🇸🇬" },
+  { id: 5, name: "Singapore", code: "SG", region: "Asia Pacific", status: "Inactive", admins: 3, flag: "🇸🇬" },
   { id: 6, name: "Sri Lanka", code: "LK", region: "Asia Pacific", status: "Active", admins: 4, flag: "🇱🇰" },
   { id: 7, name: "Germany", code: "DE", region: "Europe", status: "Active", admins: 7, flag: "🇩🇪" },
-  { id: 8, name: "Japan", code: "JP", region: "Asia Pacific", status: "Setup", admins: 2, flag: "🇯🇵" },
+  { id: 8, name: "Japan", code: "JP", region: "Asia Pacific", status: "Inactive", admins: 2, flag: "🇯🇵" },
 ];
 
 export const initialActivity: Activity[] = [
@@ -35,7 +35,7 @@ export const initialTopupSystems: TopupSystem[] = [
   { id: "nsol", name: "NSOL E-PIN", country: "Sri Lanka", status: "Active", contactName: "Nsol Operations", contactEmail: "operations@nsol.example", created: "Jan 12, 2024", accent: "#7762c8" },
   { id: "apex-digital", name: "Apex Digital Top-up", country: "United Kingdom", status: "Active", contactName: "Apex Operations", contactEmail: "ops@apexdigital.example", created: "Mar 08, 2025", accent: "#4f86cf" },
   { id: "northstar-reload", name: "Northstar Reload", country: "Canada", status: "Active", contactName: "Jordan Mitchell", contactEmail: "jordan@northstar.example", created: "Jun 17, 2025", accent: "#46a181" },
-  { id: "harbor-connect", name: "Harbor Connect E-PIN", country: "Australia", status: "Setup", contactName: "Mia Thompson", contactEmail: "mia@harborconnect.example", created: "Feb 02, 2026", accent: "#d68a4d" },
+  { id: "harbor-connect", name: "Harbor Connect E-PIN", country: "Australia", status: "Inactive", contactName: "Mia Thompson", contactEmail: "mia@harborconnect.example", created: "Feb 02, 2026", accent: "#d68a4d" },
 ];
 
 export const initialSystemRetailers: SystemRetailer[] = [
